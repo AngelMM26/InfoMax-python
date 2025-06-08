@@ -16,6 +16,9 @@ InfoMax/
 ├── main.html             # Search page interface
 ├── client.js             # Frontend JavaScript to fetch and render results
 ├── main.css              # CSS styling
+├── df.json               # JSON file storing document frequency (df)
+├── docCount.json         # JSON file storing number of documents
+├── documents.json        # JSON file mapping URLS to website titles
 ├── invertedindex.json    # JSON file storing the inverted index
 ├── pagerank.json         # JSON file storing the PageRank scores
 └── README.md             # Project documentation
@@ -73,7 +76,7 @@ pip install flask beautifulsoup4 requests nltk
 
 ## 🌐 Running the Project
 
-1. Run the crawler (optional after initial run):
+1. Run the crawler (if not satisfied with sample data, may take a bit to run depending on desired CRAWL_LIMIT):
 
 ```bash
 python crawler.py
@@ -101,7 +104,7 @@ python server.py
 
 ## 📌 Future Enhancements
 
-- Add support for **tf-idf** to improve ranking relevance
+- Add support for **tf-idf** to improve ranking relevance ✅
 - Incorporate **stemming** or **lemmatization** to improve indexing efficiency and reduce redundancy
 - Introduce **multi-threaded crawling** for speed
 - Use a database like **MongoDB** or **SQLite** for better scalability
