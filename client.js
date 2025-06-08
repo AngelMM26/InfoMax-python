@@ -7,10 +7,10 @@ document.getElementById("submit").onclick = function () {
             const start = document.getElementById("results");
             start.innerHTML = ""
 
-            for (i = 0; i < data.results.length; i++) {
+            for (let page of data.results) {
                 let link = document.createElement("a");
-                link.href = data.results[i];
-                link.innerText = `${data.results[i]}`
+                link.href = page.url;
+                link.innerText = page.title;
                 link.target = "_blank"
                 start.appendChild(link);
             }

@@ -1,12 +1,13 @@
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
-from  indexer import index, outputIndex
+from  indexer import index, outputInfo
 from rank import pagerank
 import requests
 import time
 import random
 
 CRAWL_LIMIT = 500
+N = 0 #Total documents  
 
 def wikiBot():
     urls = ["https://en.wikipedia.org/wiki/New_York_City"]
@@ -28,7 +29,6 @@ def wikiBot():
             print(f"Failed to retrieve {url}: {err}")
             continue
         
-
         webpage = response.text
         content = BeautifulSoup(webpage, "html.parser")
         index(content, url)
@@ -58,8 +58,9 @@ def wikiBot():
         graph[url] = connections
         visited.add(url)
         #print(visited)
+    N = len(visited)
     pagerank(graph)
-    outputIndex()
+    outputInfo(N)
   
 start = time.time()
 wikiBot()

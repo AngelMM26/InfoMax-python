@@ -4,10 +4,13 @@ import string
 import unicodedata
 import json
 
-
 INVERTED_INDEX = {}
+URL_FRQ = {}
+DOC_URL = {}
 
 def index(content, url):
+    DOC_URL[url] = content.title.string
+
     #Removes extra content: scripts, navigation bars, menus, footers, ads, etc. 
     for tags in content(["script", "style", "header", "footer", "nav"]):
         tags.decompose()
@@ -17,23 +20,48 @@ def index(content, url):
     #Removes control/format characters
     txt = ''.join(char for char in txt if unicodedata.category(char)[0] != "C")
 
-    #Removes punctuation, normalizes, and tokenizes text
+    #Removes punctuation, normalizes, lemmatizes, and tokenizes text
     txt = txt.translate(str.maketrans(" ", " ", string.punctuation))
     txt = txt.lower()
     tokens = txt.split()
     stop_words = set(stopwords.words("english"))
-    for token in tokens:
+
+    vistited = set()
+    for token in tokens: #Maps token/terms to urls + includes term frequency 
         if token not in stop_words and token.isalpha():
             if token in INVERTED_INDEX:
-                INVERTED_INDEX[token].add(url)
+                if url in INVERTED_INDEX[token]:
+                    INVERTED_INDEX[token][url] += 1
+                else:
+                    INVERTED_INDEX[token][url] = 1
             else:
-                INVERTED_INDEX[token] = {url}     
+                frequency = {}
+                frequency[url] = 1
+                INVERTED_INDEX[token] = frequency   
 
-def outputIndex():
-    convertedIndex = {term: list(pages) for term, pages in INVERTED_INDEX.items()}
+            #Updates document frequency (df)
+            if token not in vistited: 
+                if token not in URL_FRQ:
+                    URL_FRQ[token] = 1
+                else:
+                    URL_FRQ[token] += 1
+                vistited.add(token)
+
+def outputInfo(N):
     with open("invertedindex.json", "w", encoding="utf-8") as file:
-        sortedIndex = dict(sorted(convertedIndex.items(), key=lambda x: x[0]))
+        sortedIndex = dict(sorted(INVERTED_INDEX.items(), key=lambda x: x[0]))
         json.dump(sortedIndex, file, indent=2, ensure_ascii=False)
+
+    with open("df.json", "w", encoding="utf-8") as file:
+        sortedDF = dict(sorted(URL_FRQ.items(), key=lambda x: x[0]))
+        json.dump(sortedDF, file, indent=2, ensure_ascii=False)
+
+    with open("documents.json", "w", encoding="utf-8") as file:
+        sortedDocs = dict(sorted(DOC_URL.items(), key=lambda x: x[0]))
+        json.dump(sortedDocs, file, indent=2, ensure_ascii=False)
+
+    with open("doccount.json", "w", encoding="utf-8") as file:
+        json.dump({"N": N}, file, indent=2, ensure_ascii=False)
 
 
 
