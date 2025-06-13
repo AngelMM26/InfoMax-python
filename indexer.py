@@ -48,19 +48,19 @@ def index(content, url):
                 vistited.add(token)
 
 def outputInfo(N):
-    with open("invertedindex.json", "w", encoding="utf-8") as file:
+    with open("data/invertedindex.json", "w", encoding="utf-8") as file:
         sortedIndex = dict(sorted(INVERTED_INDEX.items(), key=lambda x: x[0]))
         json.dump(sortedIndex, file, indent=2, ensure_ascii=False)
 
-    with open("df.json", "w", encoding="utf-8") as file:
+    with open("data/df.json", "w", encoding="utf-8") as file:
         sortedDF = dict(sorted(URL_FRQ.items(), key=lambda x: x[0]))
         json.dump(sortedDF, file, indent=2, ensure_ascii=False)
 
-    with open("documents.json", "w", encoding="utf-8") as file:
+    with open("data/documents.json", "w", encoding="utf-8") as file:
         sortedDocs = dict(sorted(DOC_URL.items(), key=lambda x: x[0]))
         json.dump(sortedDocs, file, indent=2, ensure_ascii=False)
 
-    with open("doccount.json", "w", encoding="utf-8") as file:
+    with open("data/doccount.json", "w", encoding="utf-8") as file:
         json.dump({"N": N}, file, indent=2, ensure_ascii=False)
 
 

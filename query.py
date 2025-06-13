@@ -8,21 +8,21 @@ import math
 app = Flask(__name__)
 CORS(app) #allows page served from localhost:5500 to fetch from localhost:5000
 
-with open("invertedindex.json", encoding="utf-8") as file:
+with open("data/invertedindex.json", encoding="utf-8") as file:
     rawIndex = json.load(file)
     invertedIndex = {term: set(links) for term, links in rawIndex.items()}
     invertedIndex_tf = {term: links for term, links in rawIndex.items()}
     
-with open("pagerank.json", encoding="utf-8") as file:
+with open("data/pagerank.json", encoding="utf-8") as file:
     pageranks = json.load(file)
 
-with open("df.json", encoding="utf-8") as file:
+with open("data/df.json", encoding="utf-8") as file:
     df = json.load(file)
 
-with open("documents.json", encoding="utf-8") as file:
+with open("data/documents.json", encoding="utf-8") as file:
     documents = json.load(file)
 
-with open("doccount.json", encoding="utf-8") as file:
+with open("data/doccount.json", encoding="utf-8") as file:
     N = json.load(file)["N"]
     
 
