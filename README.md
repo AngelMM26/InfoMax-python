@@ -12,10 +12,12 @@ InfoMax/
 ├── crawler.py            # Crawls and collects pages from Wikipedia
 ├── indexer.py            # Builds the inverted index
 ├── rank.py               # Implements PageRank algorithm
-├── server.py             # Flask backend to handle user search queries
-├── main.html             # Search page interface
-├── client.js             # Frontend JavaScript to fetch and render results
-├── main.css              # CSS styling
+├── query.py              # Flask backend to handle user search queries
+├── index.html            # Search page interface
+├── serp.html             # List of results in response to query
+├── search.js             # Frontend JavaScript to fetch and render results
+├── searpstyle.css        # CSS styling
+├── style.css             # CSS styling
 ├── df.json               # JSON file storing document frequency (df)
 ├── docCount.json         # JSON file storing number of documents
 ├── documents.json        # JSON file mapping URLS to website titles
