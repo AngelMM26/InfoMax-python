@@ -30,7 +30,7 @@ def pagerank(graph, damping=0.85, iterations=100):
             bestRank[node] = (1-damping)/N + damping*(sumPR+sinkSum)
         rank = bestRank
   
-    with open("pagerank.json", "w", encoding="utf-8") as file:
+    with open("data/pagerank.json", "w", encoding="utf-8") as file:
         sortedRank = dict(sorted(rank.items(), key=lambda x: -x[1]))
         json.dump(sortedRank, file, indent=2, ensure_ascii=False)
     
