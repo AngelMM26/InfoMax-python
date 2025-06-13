@@ -22,7 +22,7 @@ InfoMax/
 ├── index.html            # Search page interface
 ├── serp.html             # List of results in response to query
 ├── search.js             # Frontend JavaScript to fetch and render results
-├── serpstyle.css        # CSS styling
+├── serpstyle.css         # CSS styling
 ├── style.css             # CSS styling
 └── README.md             # Project documentation
 ```
