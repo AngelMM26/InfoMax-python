@@ -109,7 +109,7 @@ python server.py
 
 - Add support for **tf-idf** to improve ranking relevance ✅
 - Incorporate **stemming** or **lemmatization** to improve indexing efficiency and reduce redundancy
-- Introduce **multi-threaded crawling** for speed
+- Introduce **multi-threaded crawling** for speed ✅
 - Use a database like **MongoDB** or **SQLite** for better scalability
 
 ---
