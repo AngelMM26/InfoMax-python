@@ -15,15 +15,20 @@ InfoMax/
 |   ├── documents.json        # JSON file mapping URLS to website titles
 |   ├── invertedindex.json    # JSON file storing the inverted index
 |   ├── pagerank.json         # JSON file storing the PageRank scores
+|
+├── static/
+|   ├── search.js             # Frontend JavaScript to fetch and render results
+|   ├── serpstyle.css         # CSS styling
+|   ├── style.css             # CSS styling
+|   
+├── templates/
+|   ├── index.html            # Search page interface
+|   ├── serp.html             # List of results in response to query
+|   
 ├── crawler.py            # Crawls and collects pages from Wikipedia
 ├── indexer.py            # Builds the inverted index
 ├── rank.py               # Implements PageRank algorithm
 ├── query.py              # Flask backend to handle user search queries
-├── index.html            # Search page interface
-├── serp.html             # List of results in response to query
-├── search.js             # Frontend JavaScript to fetch and render results
-├── serpstyle.css         # CSS styling
-├── style.css             # CSS styling
 └── README.md             # Project documentation
 ```
 
@@ -88,7 +93,7 @@ python crawler.py
 2. Start the Flask server:
 
 ```bash
-python server.py
+python query.py
 ```
 
 3. Open `index.html` in your browser (hosted locally or using Live Server in VSCode).
@@ -108,9 +113,7 @@ python server.py
 ## 📌 Future Enhancements
 
 - Add support for **tf-idf** to improve ranking relevance ✅
-- Incorporate **stemming** or **lemmatization** to improve indexing efficiency and reduce redundancy
 - Introduce **multi-threaded crawling** for speed ✅
-- Use a database like **MongoDB** or **SQLite** for better scalability
 
 ---
 
