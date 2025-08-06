@@ -1,6 +1,6 @@
 # InfoMax 🔍
 
-**InfoMax** is a lightweight search engine that crawls Wikipedia pages, indexes content using an inverted index, ranks results with PageRank, and serves them through a sleek frontend built with JavaScript and styled CSS. It's a complete end to end search engine implementation built from scratch using Python and Flask for the backend and vanilla JavaScript for the frontend. :)
+**InfoMax** is a lightweight search engine that crawls Wikipedia pages, indexes content using an inverted index, ranks results with PageRank, and serves them through a sleek frontend built with JavaScript and styled CSS. It's a complete search engine implementation built from scratch using Python and Flask for the backend. :)
 
 ---
 
