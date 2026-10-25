@@ -8,6 +8,8 @@ INVERTED_INDEX = {}
 URL_FRQ = {}
 DOC_URL = {}
 
+STOP_WORDS = set(stopwords.words("english"))
+
 def index(content, url):
     DOC_URL[url] = content.title.string
 
@@ -24,11 +26,10 @@ def index(content, url):
     txt = txt.translate(str.maketrans(" ", " ", string.punctuation))
     txt = txt.lower()
     tokens = txt.split()
-    stop_words = set(stopwords.words("english"))
 
     vistited = set()
     for token in tokens: #Maps token/terms to urls + includes term frequency 
-        if token not in stop_words and token.isalpha():
+        if token not in STOP_WORDS and token.isalpha():
             if token in INVERTED_INDEX:
                 if url in INVERTED_INDEX[token]:
                     INVERTED_INDEX[token][url] += 1
