@@ -32,13 +32,16 @@ def crawl(args):
                 break
             if url in visited:
                 continue
-            #print("Crawling:", url)
+            print("Crawling:", url)
             visited.add(url)
         time.sleep(random.uniform(1, 2.5))
 
         #HTTP GET request to the currURL in an attempt to retrieve data 
+        headers = {
+            "User-Agent": "InfoMaxBot/1.0 (https://github.com/AngelMM26/InfoMax)"
+        }
         try:
-            response = requests.get(url)
+            response = requests.get(url, headers=headers)
             response.raise_for_status() 
         except requests.RequestException as err:
             print(f"Failed to retrieve {url}: {err}")
@@ -48,21 +51,23 @@ def crawl(args):
         content = BeautifulSoup(webpage, "html.parser")
         index(content, url)
        
-        links = content.findAll("a")
+        links = content.find_all("a")
         connections = set()
         for link in links:
-            try:
-                #Attempt to filter out "utility" pages, i.e wiki/Wikipedia:Community_portal, wiki/Help:Introduction, /wiki/Special:Random
-                if link["href"].startswith("/wiki") and ":" not in urlparse(link["href"]).path:
-                    #reformat urls
-                    link["href"] = "https://en.wikipedia.org" + link["href"]
-                else:
-                    continue
-            #Some href attributes do not have a valid link
-            except KeyError: 
-                continue 
-            connections.add(link["href"])
-            urls.put(link["href"])
+            href = link.get("href")
+            if not href:
+                continue
+            parsed = urlparse(href)
+
+            #Attempt to filter out "utility" pages, i.e wiki/Wikipedia:Community_portal, wiki/Help:Introduction, /wiki/Special:Random
+            if (
+                parsed.netloc == "en.wikipedia.org"
+                and parsed.path.startswith("/wiki/")
+                and ":" not in parsed.path
+                and not parsed.query
+            ):
+                connections.add(href)
+                urls.put(href)
             
         with lock:
             crawls[0] += 1
@@ -90,8 +95,16 @@ def wikiBot():
     }
 
     with ThreadPoolExecutor(max_workers=NUM_THREADS) as executor:
+        """for _ in range(NUM_THREADS):
+            executor.submit(crawl, args)"""
+
+        futures = []
+
         for _ in range(NUM_THREADS):
-            executor.submit(crawl, args)
+            futures.append(executor.submit(crawl, args))
+
+        for future in futures:
+            future.result()
 
     pagerank(graph)
     outputInfo(len(visited))
