@@ -4,6 +4,7 @@ from nltk.corpus import stopwords
 import string
 import json
 import math
+import time
 
 app = Flask(__name__)
 CORS(app) #allows page served from localhost:5500 to fetch from localhost:5000
@@ -28,6 +29,7 @@ with open("data/doccount.json", encoding="utf-8") as file:
 
 @app.route("/search")
 def search():
+    start = time.perf_counter()
     query = request.args.get("q") 
     keywords = str(query).lower()
     keywords = keywords.translate(str.maketrans(" ", " ", string.punctuation))
@@ -53,6 +55,7 @@ def search():
         rankings[page] = pageranks[page] * tf_idf
     results = sorted(results, key=lambda page: rankings[page], reverse=True)
     completeResults = [{"url": url, "title": documents[url]} for url in results]
+    print((time.perf_counter() - start))
     return jsonify({"results": completeResults})  
 
 if __name__ == "__main__":
