@@ -45,7 +45,12 @@ InfoMax/
 ### Install Dependencies
 
 ```bash
-pip install flask beautifulsoup4 requests nltk
+pip install flask flask-cors beautifulsoup4 requests nltk
+```
+
+NLTK requires an additional download of its English stopwords corpus.
+```bash
+python -m nltk.downloader stopwords
 ```
 
 ---
