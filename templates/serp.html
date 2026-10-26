@@ -25,7 +25,7 @@
 
             document.getElementById("userInput").value = query
 
-            fetch(`http://127.0.0.1:5000/search?q=${query}`)
+            fetch(`http://127.0.0.1:5000/api/query?q=${query}`)
                 .then(result => result.json())
                 .then(data => {
                     const start = document.getElementById("results");

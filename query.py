@@ -21,7 +21,7 @@ N         = load("data/doccount.json")["N"]
 
 STOP_WORDS = set(stopwords.words("english"))    
 
-@app.route("/search")
+@app.route("/api/query")
 def search():
     start = time.perf_counter()
     query = request.args.get("q")
@@ -39,7 +39,7 @@ def search():
                 pages = pages&invertedIndex[token].keys()
             idf[token] = math.log(N/df[token]) 
     results = list(pages) if pages is not None else [] 
-     
+
     rankings = {}
     for page in results:
         tf_idf = 0
