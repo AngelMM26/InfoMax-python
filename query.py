@@ -9,50 +9,46 @@ import time
 app = Flask(__name__)
 CORS(app) #allows page served from localhost:5500 to fetch from localhost:5000
 
-with open("data/invertedindex.json", encoding="utf-8") as file:
-    rawIndex = json.load(file)
-    invertedIndex = {term: set(links) for term, links in rawIndex.items()}
-    invertedIndex_tf = {term: links for term, links in rawIndex.items()}
-    
-with open("data/pagerank.json", encoding="utf-8") as file:
-    pageranks = json.load(file)
+def load(path):
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
 
-with open("data/df.json", encoding="utf-8") as file:
-    df = json.load(file)
+invertedIndex   = load("data/invertedindex.json")
+pageranks = load("data/pagerank.json")
+df        = load("data/df.json")
+documents = load("data/documents.json")
+N         = load("data/doccount.json")["N"]
 
-with open("data/documents.json", encoding="utf-8") as file:
-    documents = json.load(file)
-
-with open("data/doccount.json", encoding="utf-8") as file:
-    N = json.load(file)["N"]
-    
+STOP_WORDS = set(stopwords.words("english"))    
 
 @app.route("/search")
 def search():
     start = time.perf_counter()
-    query = request.args.get("q") 
+    query = request.args.get("q")
+
     keywords = str(query).lower()
     keywords = keywords.translate(str.maketrans(" ", " ", string.punctuation))
     tokens = keywords.split()
-    stop_words = set(stopwords.words("english"))
-    pages = ""
+    pages = None
     idf = {}
     for token in tokens:
-        if token not in stop_words and token.isalpha() and token in invertedIndex:
-            if pages == "":
-                pages = invertedIndex[token]
+        if token not in STOP_WORDS and token.isalpha() and token in invertedIndex:
+            if pages is None:
+                pages = invertedIndex[token].keys()
             else:
-                pages = pages&invertedIndex[token]
-            idf[token] = math.log(N/df[token])           
-    results = list(pages)
+                pages = pages&invertedIndex[token].keys()
+            idf[token] = math.log(N/df[token]) 
+    results = list(pages) if pages is not None else [] 
+     
     rankings = {}
     for page in results:
         tf_idf = 0
         for token in tokens:
-            if token not in stop_words and token.isalpha() and token in invertedIndex:
-                tf = invertedIndex_tf[token][page]
+            if token not in STOP_WORDS and token.isalpha() and token in invertedIndex:
+                tf = invertedIndex[token][page]
                 tf_idf += tf * idf[token]
         rankings[page] = pageranks[page] * tf_idf
+
     results = sorted(results, key=lambda page: rankings[page], reverse=True)
     completeResults = [{"url": url, "title": documents[url]} for url in results]
     print((time.perf_counter() - start))
