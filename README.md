@@ -119,6 +119,7 @@ python query.py
 
 - Add support for **tf-idf** to improve ranking relevance ✅
 - Introduce **multi-threaded crawling** for speed ✅
+- Develop a **RAG** pipeline to retrieve relevant passages and generate source-grounded answers using AI
 
 ---
 
