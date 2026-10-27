@@ -24,7 +24,7 @@ h1 {
 }
 
 
-input {
+#userInput {
     width: 100%;
     padding: 12px 20px;
     border: 2px solid black;
@@ -33,6 +33,59 @@ input {
     color: #DC143C;
 }
 
-input#userInput::placeholder {
+#userInput::placeholder {
     color: #DC143C;
+}
+
+#ai-toggle {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    letter-spacing: 3px;
+    color: black;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Hide the native checkbox but keep it accessible */
+#aiMode {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch {
+    position: relative;
+    width: 40px;
+    height: 20px;
+    border: 2px solid black;
+    background: #e8e8e8;
+}
+
+.switch::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background: black;
+    transition: transform 0.2s, background 0.2s;
+}
+
+#aiMode:checked + .switch::after {
+    transform: translateX(20px);
+    background: #DC143C;
+}
+
+#aiMode:checked ~ .label-text {
+    color: #DC143C;
+}
+
+#aiMode:focus-visible + .switch {
+    outline: 2px dashed #DC143C;
+    outline-offset: 3px;
 }

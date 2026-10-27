@@ -22,7 +22,7 @@ header {
     justify-content: center;
 }
 
-input {
+#userInput {
     width: 100%;
     padding: 12px 20px;
     border: 2px solid black;
@@ -31,7 +31,7 @@ input {
     color: #DC143C;
 }
 
-input#userInput::placeholder {
+#userInput::placeholder {
     color: #DC143C;
 }
 
@@ -78,4 +78,182 @@ h1#logo a#logo-link {
 a#logo-link:hover {
     color: inherit;
     text-decoration: none;
+}
+
+#ai-toggle {
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 14px;
+    letter-spacing: 3px;
+    color: black;
+    cursor: pointer;
+    user-select: none;
+}
+
+#aiMode {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch {
+    position: relative;
+    width: 40px;
+    height: 20px;
+    border: 2px solid black;
+    background: #e8e8e8;
+}
+
+.switch::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background: black;
+    transition: transform 0.2s, background 0.2s;
+}
+
+#aiMode:checked + .switch::after {
+    transform: translateX(20px);
+    background: #DC143C;
+}
+
+#aiMode:checked ~ .label-text {
+    color: #DC143C;
+}
+
+#aiMode:focus-visible + .switch {
+    outline: 2px dashed #DC143C;
+    outline-offset: 3px;
+}
+
+/* AI Overview */
+
+#ai-overview {
+    margin-top: 40px;
+    margin-left: 65px;
+    padding: 10px 10px 0 10px;
+    width: calc(50% - 10px);
+    font-size: 16px;
+    line-height: 1.5;
+    color: black;
+    background-color: white;
+    border: 2px solid black;
+}
+
+#ai-overview[hidden] {
+    display: none;
+}
+
+#ai-overview + #results {
+    margin-top: 20px;
+}
+
+.ai-label,
+.ai-sources-label {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    color: #DC143C;
+}
+
+.ai-body p {
+    margin: 0 0 12px 0;
+}
+
+.ai-body p.ai-heading {
+    font-weight: bold;
+    margin-top: 16px;
+}
+
+.ai-body ul,
+.ai-body ol {
+    margin: 0 0 12px 0;
+    padding-left: 24px;
+}
+
+.ai-body li {
+    margin-bottom: 6px;
+}
+
+.ai-body code {
+    padding: 0 4px;
+    background: #e8e8e8;
+    border: 1px solid black;
+}
+
+a.ai-cite {
+    display: inline-block;
+    margin: 0 2px;
+    padding: 0 4px;
+    font-size: 11px;
+    line-height: 1.4;
+    vertical-align: super;
+    color: white;
+    background: #DC143C;
+    border: 1px solid black;
+}
+
+a.ai-cite:hover {
+    background: maroon;
+    color: white;
+    text-decoration: none;
+}
+
+.ai-loading {
+    color: #DC143C;
+    letter-spacing: 3px;
+}
+
+.ai-loading span {
+    animation: ai-blink 1s steps(2, start) infinite;
+}
+
+@keyframes ai-blink {
+    to {
+        visibility: hidden;
+    }
+}
+
+.ai-sources {
+    margin-top: 12px;
+    padding-top: 10px;
+    padding-bottom: 6px;
+    border-top: 1px dashed black;
+}
+
+.ai-sources[hidden] {
+    display: none;
+}
+
+.ai-sources-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+}
+
+.ai-sources-list li {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.ai-source-ids {
+    flex-shrink: 0;
+    color: black;
+}
+
+.ai-sources-list a {
+    display: inline;
+    margin: 0;
+    overflow-wrap: anywhere;
 }

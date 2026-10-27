@@ -14,18 +14,152 @@
         <div id="search-container">
             <input id="userInput" placeholder="S E A R C H..." autocomplete="off" />
         </div>
+        <label id="ai-toggle">
+            <input type="checkbox" id="aiMode" />
+            <span class="switch"></span>
+            <span class="label-text">AI ANSWER</span>
+        </label>
     </header>
+
+    <section id="ai-overview" hidden>
+        <p class="ai-label">AI OVERVIEW</p>
+        <div class="ai-body"></div>
+        <div class="ai-sources" hidden>
+            <p class="ai-sources-label">SOURCES</p>
+            <ol class="ai-sources-list"></ol>
+        </div>
+    </section>
+
     <div id="results"></div>
 
     <script src="/static/search.js"></script>
     <script>
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        // Light inline formatting: **bold**, *italic*, `code`, and [n] citations
+        function formatInline(text, sourceUrls) {
+            return escapeHtml(text)
+                .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+                .replace(/(^|[^*])\*([^*\s][^*]*?)\*/g, "$1<em>$2</em>")
+                .replace(/`([^`]+)`/g, "<code>$1</code>")
+                .replace(/\[(\d+)\]/g, (match, id) => {
+                    const url = sourceUrls[id];
+                    if (!url) return match;
+                    return `<a class="ai-cite" href="${escapeHtml(url)}" target="_blank" title="${escapeHtml(url)}">${id}</a>`;
+                });
+        }
+
+        // Turns the model's markdown-ish answer into paragraphs, headings and lists
+        function renderAnswer(answer, sourceUrls) {
+            const html = [];
+            let listType = null;
+
+            const closeList = () => {
+                if (listType) html.push(`</${listType}>`);
+                listType = null;
+            };
+
+            for (const rawLine of answer.split("\n")) {
+                const line = rawLine.trim();
+                let match;
+
+                if (!line) {
+                    closeList();
+                } else if ((match = line.match(/^#{1,6}\s+(.*)$/))) {
+                    closeList();
+                    html.push(`<p class="ai-heading">${formatInline(match[1], sourceUrls)}</p>`);
+                } else if ((match = line.match(/^[-*•]\s+(.*)$/)) || (match = line.match(/^\d+[.)]\s+(.*)$/))) {
+                    const type = /^\d/.test(line) ? "ol" : "ul";
+                    if (listType !== type) {
+                        closeList();
+                        html.push(`<${type}>`);
+                        listType = type;
+                    }
+                    html.push(`<li>${formatInline(match[1], sourceUrls)}</li>`);
+                } else {
+                    closeList();
+                    html.push(`<p>${formatInline(line, sourceUrls)}</p>`);
+                }
+            }
+            closeList();
+            return html.join("");
+        }
+
+        function renderOverview(aiAnswer, results) {
+            const section = document.getElementById("ai-overview");
+            const body = section.querySelector(".ai-body");
+            const sourcesBox = section.querySelector(".ai-sources");
+            const sourcesList = section.querySelector(".ai-sources-list");
+
+            section.classList.remove("loading");
+
+            if (!aiAnswer || !aiAnswer.answer) {
+                section.hidden = true;
+                return;
+            }
+
+            const sources = aiAnswer.sources || [];
+            const sourceUrls = {};
+            for (const source of sources) sourceUrls[source.id] = source.url;
+
+            body.innerHTML = renderAnswer(aiAnswer.answer, sourceUrls);
+
+            // Group citation ids by URL so each page is only listed once
+            const titles = {};
+            for (const page of results || []) titles[page.url] = page.title;
+
+            const grouped = new Map();
+            for (const source of sources) {
+                if (!grouped.has(source.url)) grouped.set(source.url, []);
+                grouped.get(source.url).push(source.id);
+            }
+
+            sourcesList.innerHTML = "";
+            for (const [url, ids] of grouped) {
+                const item = document.createElement("li");
+
+                const tag = document.createElement("span");
+                tag.className = "ai-source-ids";
+                tag.innerText = ids.map(id => `[${id}]`).join("");
+
+                const link = document.createElement("a");
+                link.href = url;
+                link.target = "_blank";
+                link.innerText = titles[url] || url;
+
+                item.appendChild(tag);
+                item.appendChild(link);
+                sourcesList.appendChild(item);
+            }
+            sourcesBox.hidden = grouped.size === 0;
+            section.hidden = false;
+        }
+
         window.addEventListener("DOMContentLoaded", () => {
             const params = new URLSearchParams(window.location.search);
             const query = params.get("q");
+            const aiToggle = params.get("aiEnabled") === "true";
 
             document.getElementById("userInput").value = query
+            document.getElementById("aiMode").checked = aiToggle;
 
-            fetch(`http://127.0.0.1:5000/api/query?q=${query}`)
+            const overview = document.getElementById("ai-overview");
+            if (aiToggle) {
+                overview.hidden = false;
+                overview.classList.add("loading");
+                overview.querySelector(".ai-body").innerHTML = '<p class="ai-loading">GENERATING<span>...</span></p>';
+            }
+
+            fetch(`http://127.0.0.1:5000/api/query?${new URLSearchParams({
+                q: query,
+                aiEnabled: String(aiToggle)
+            })}`)
                 .then(result => result.json())
                 .then(data => {
                     const start = document.getElementById("results");
@@ -38,6 +172,11 @@
                         link.target = "_blank";
                         start.appendChild(link);
                     }
+
+                    renderOverview(data.ai_answer, data.results);
+                })
+                .catch(() => {
+                    overview.hidden = true;
                 });
         });
     </script>
